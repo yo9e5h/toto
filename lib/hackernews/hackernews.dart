@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:toto/hackernews/models/item.dart';
 import 'package:dio/dio.dart';
@@ -21,43 +23,46 @@ class _ItemsListState extends State<ItemsList> {
 
   @override
   void initState() {
-    _fetchItems();
+    _fetchTopStories();
     super.initState();
   }
 
-  _fetchItems() async {
+  _fetchTopStories() async {
     setState(() {
       _isLoading = true;
     });
 
     Dio().get('https://hacker-news.firebaseio.com/v0/topstories.json')
       .then((response) {
-        for (var i = 0; i < 24; i++) {
-          Dio().get('https://hacker-news.firebaseio.com/v0/item/${response.data[i]}.json')
-          .then((response) {
-            List<Item> newItems = items;
-            newItems.add(Item.fromJson(response.data));
-            setState(() {
-              items = newItems;
-            });
-          })
-          .catchError((error) {
-            print(error);
-          });
-        }
-
-        setState(() {
-          _isLoading = false;
-        });
+        _getItems(response.data.sublist(0, 24)).then(_appendItems);
       })
       .catchError((error) {
         print(error);
       });
   }
 
+  Future<List<Item>> _getItems(List<dynamic> list) async {
+    Completer<List<Item>> completer = new Completer<List<Item>>();
+
+    Future.wait(
+      list.map((id) => Dio().get('https://hacker-news.firebaseio.com/v0/item/$id.json')
+        .then((response) => Item.fromJson(response.data)))
+    ).then((value) => completer.complete(value));
+
+    return completer.future;
+  }
+
+  _appendItems(List<Item> value) {
+    setState(() {
+      items.addAll(value);
+      print(items.length);
+      _isLoading = false;
+    });
+  }
+
   Future _refreshItems() async {
     Future.delayed(Duration(seconds: 1));
-    await _fetchItems();
+    await _fetchTopStories();
   }
 
   @override
