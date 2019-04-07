@@ -7,8 +7,9 @@ class Item {
   final String url;
   final int score;
   final String time;
+  final String descendants;
 
-  Item({this.id, this.title, this.by, this.url, this.score, this.time});
+  Item({this.id, this.title, this.by, this.url, this.score, this.time, this.descendants});
 
   factory Item.fromJson(Map json) {
     var datetime = DateTime.fromMillisecondsSinceEpoch(json['time'] * 1000);
@@ -20,6 +21,7 @@ class Item {
       url: json['url'] as String,
       score: json['score'] as int,
       time: timeago.format(datetime),
+      descendants: "${json['descendants']}",
     );
   }
 }

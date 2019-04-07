@@ -27,12 +27,21 @@ class _MyAppState extends State<MyApp> {
     Dribbble()
   ];
 
+  final _colors = [
+    Colors.deepOrange,
+    Colors.blueAccent,
+    Colors.lightGreen,
+    Colors.orangeAccent,
+    Colors.black,
+    Colors.pinkAccent
+  ];
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: Colors.orange
+        primaryColor: _colors.elementAt(_index)
       ),
       home: Scaffold(
         appBar: AppBar(
@@ -41,43 +50,43 @@ class _MyAppState extends State<MyApp> {
         body: _screens.elementAt(_index),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _index,
+          items: [
+            BottomNavigationBarItem(
+              backgroundColor: Colors.deepOrange,
+              icon: Icon(TotoApp.hacker_news),
+              title: Text('HackerNews'),
+            ),
+            BottomNavigationBarItem(
+              backgroundColor: Colors.blueAccent,
+              icon: Icon(TotoApp.reddit_alien),
+              title: Text('Reddit'),
+            ),
+            BottomNavigationBarItem(
+              backgroundColor: Colors.lightGreen,
+              icon: Icon(TotoApp.medium),
+              title: Text('Medium'),
+            ),
+            BottomNavigationBarItem(
+              backgroundColor: Colors.orangeAccent,
+              icon: Icon(TotoApp.product_hunt),
+              title: Text('ProductHunt'),
+            ),
+            BottomNavigationBarItem(
+              backgroundColor: Colors.black,
+              icon: Icon(TotoApp.github_circled),
+              title: Text('GitHub'),
+            ),
+            BottomNavigationBarItem(
+              backgroundColor: Colors.pinkAccent,
+              icon: Icon(TotoApp.dribbble),
+              title: Text('Dribbble'),
+            ),
+          ],
           onTap: (int index) {
             setState(() {
               _index = index;
             });
           },
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              backgroundColor: Colors.orange,
-              icon: Icon(TotoApp.hacker_news),
-              title: Text('HackerNews'),
-            ),
-            BottomNavigationBarItem(
-              backgroundColor: Colors.orange,
-              icon: Icon(TotoApp.reddit_alien),
-              title: Text('Reddit'),
-            ),
-            BottomNavigationBarItem(
-              backgroundColor: Colors.orange,
-              icon: Icon(TotoApp.medium),
-              title: Text('Medium'),
-            ),
-            BottomNavigationBarItem(
-              backgroundColor: Colors.orange,
-              icon: Icon(TotoApp.product_hunt),
-              title: Text('ProductHunt'),
-            ),
-            BottomNavigationBarItem(
-              backgroundColor: Colors.orange,
-              icon: Icon(TotoApp.github_circled),
-              title: Text('GitHub'),
-            ),
-            BottomNavigationBarItem(
-              backgroundColor: Colors.orange,
-              icon: Icon(TotoApp.dribbble),
-              title: Text('Dribbble'),
-            ),
-          ],
         ),
       ),
     );

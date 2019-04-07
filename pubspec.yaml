@@ -25,6 +25,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   timeago: ^2.0.13
   dio: any
+  url_launcher: any
 
 dev_dependencies:
   flutter_test:

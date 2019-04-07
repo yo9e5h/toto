@@ -1,4 +1,4 @@
-package com.example.toto;
+package com.chitranu.toto;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
