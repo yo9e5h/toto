@@ -82,16 +82,16 @@ class _ItemsListState extends State<ItemsList> {
           return ListTile(
             contentPadding: EdgeInsets.all(10.0),
             title: Padding(padding: EdgeInsets.only(bottom: 8.0), child: Text(item.title),),
-            subtitle: Text("${item.by} (${item.time})", style: TextStyle(fontSize: 12.0),),
+            subtitle: Text("${item.by} - ${item.time}", style: TextStyle(fontSize: 12.0),),
             trailing: Column(
               children: <Widget>[
                 IconButton(
-                  icon: Icon(Icons.comment, color: Colors.deepOrange,),
+                  icon: Icon(Icons.comment,),
                   onPressed: () async {
                     var url = "https://news.ycombinator.com/item?id=${item.id}";
                     try {
                       await launch(url, option: CustomTabsOption(
-                        toolbarColor: Colors.deepOrange,
+                        toolbarColor: Color(0xFF222222),
                         showPageTitle: true,
                       ));
                     } catch (e) {
@@ -104,7 +104,7 @@ class _ItemsListState extends State<ItemsList> {
             onTap: () async {
               try {
                 await launch(item.url, option: CustomTabsOption(
-                  toolbarColor: Colors.deepOrange,
+                  toolbarColor: Color(0xFF222222),
                   showPageTitle: true,
                 ));
               } catch (e) {

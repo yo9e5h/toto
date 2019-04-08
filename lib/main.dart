@@ -27,13 +27,13 @@ class _MyAppState extends State<MyApp> {
     Dribbble()
   ];
 
-  final _colors = [
-    Colors.deepOrange,
-    Colors.blueAccent,
-    Colors.lightGreen,
-    Colors.orangeAccent,
-    Colors.black,
-    Colors.pinkAccent
+  final _titles = [
+    "HackerNews",
+    "Reddit",
+    "Medium",
+    "ProductHunt",
+    "GitHub",
+    "Dribbble"
   ];
 
   @override
@@ -41,45 +41,41 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: _colors.elementAt(_index)
+        primaryColor: Color(0xFF222222)
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('The Toto App'),
+          title: Text(_titles.elementAt(_index)),
         ),
         body: _screens.elementAt(_index),
         bottomNavigationBar: BottomNavigationBar(
+          unselectedItemColor: Color(0xFF999999),
           currentIndex: _index,
+          type: BottomNavigationBarType.fixed,
           items: [
             BottomNavigationBarItem(
-              backgroundColor: Colors.deepOrange,
               icon: Icon(TotoApp.hacker_news),
-              title: Text('HackerNews'),
+              title: SizedBox.shrink(),
             ),
             BottomNavigationBarItem(
-              backgroundColor: Colors.blueAccent,
               icon: Icon(TotoApp.reddit_alien),
-              title: Text('Reddit'),
+              title: SizedBox.shrink(),
             ),
             BottomNavigationBarItem(
-              backgroundColor: Colors.lightGreen,
               icon: Icon(TotoApp.medium),
-              title: Text('Medium'),
+              title: SizedBox.shrink(),
             ),
             BottomNavigationBarItem(
-              backgroundColor: Colors.orangeAccent,
               icon: Icon(TotoApp.product_hunt),
-              title: Text('ProductHunt'),
+              title: SizedBox.shrink(),
             ),
             BottomNavigationBarItem(
-              backgroundColor: Colors.black,
               icon: Icon(TotoApp.github_circled),
-              title: Text('GitHub'),
+              title: SizedBox.shrink(),
             ),
             BottomNavigationBarItem(
-              backgroundColor: Colors.pinkAccent,
               icon: Icon(TotoApp.dribbble),
-              title: Text('Dribbble'),
+              title: SizedBox.shrink(),
             ),
           ],
           onTap: (int index) {
