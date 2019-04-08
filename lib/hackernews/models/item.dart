@@ -21,7 +21,7 @@ class Item {
       url: json['url'] as String,
       score: json['score'] as int,
       time: timeago.format(datetime),
-      descendants: "${json['descendants']}",
+      descendants: "${json['descendants'] ?? 0}",
     );
   }
 }

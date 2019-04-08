@@ -76,23 +76,27 @@ class _HackerNews extends State<HackerNews> {
             contentPadding: EdgeInsets.all(10.0),
             title: Padding(padding: EdgeInsets.only(bottom: 8.0), child: Text(item.title),),
             subtitle: Text("${item.by} - ${item.time}", style: TextStyle(fontSize: 12.0),),
-            trailing: Column(
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.comment,),
-                  onPressed: () async {
-                    var url = "https://news.ycombinator.com/item?id=${item.id}";
-                    try {
-                      await launch(url, option: CustomTabsOption(
-                        toolbarColor: Color(0xFF222222),
-                        showPageTitle: true,
-                      ));
-                    } catch (e) {
-                    }
-                  },
+            trailing: Transform.translate(
+              offset: Offset(5, 0),
+                child: IconButton(
+                padding: EdgeInsets.all(0),
+                icon: Column(
+                  children: <Widget>[
+                    Icon(Icons.comment,),
+                    Text(item.descendants)
+                  ],
                 ),
-                Text(item.descendants)
-              ],
+                onPressed: () async {
+                  var url = "https://news.ycombinator.com/item?id=${item.id}";
+                  try {
+                    await launch(url, option: CustomTabsOption(
+                      toolbarColor: Color(0xFF222222),
+                      showPageTitle: true,
+                    ));
+                  } catch (e) {
+                  }
+                },
+              ),
             ),
             onTap: () async {
               try {
