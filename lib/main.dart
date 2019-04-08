@@ -41,13 +41,17 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: Color(0xFF222222)
+        primaryColor: Color(0xFF222222),
+        accentColor: Color(0xFF222222),
       ),
       home: Scaffold(
         appBar: AppBar(
           title: Text(_titles.elementAt(_index)),
         ),
-        body: _screens.elementAt(_index),
+        body: IndexedStack(
+          index: _index,
+          children: _screens,
+        ),
         bottomNavigationBar: BottomNavigationBar(
           unselectedItemColor: Color(0xFF999999),
           currentIndex: _index,

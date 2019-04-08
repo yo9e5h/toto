@@ -5,19 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:toto/hackernews/models/item.dart';
 import 'package:dio/dio.dart';
 
-class HackerNews extends StatelessWidget {
+class HackerNews extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return ItemsList();
-  }
+  _HackerNews createState() => _HackerNews();
 }
 
-class ItemsList extends StatefulWidget {
-  @override
-  _ItemsListState createState() => _ItemsListState();
-}
-
-class _ItemsListState extends State<ItemsList> {
+class _HackerNews extends State<HackerNews> {
   List<Item> items = [];
   bool _isLoading = false;
 
@@ -66,7 +59,7 @@ class _ItemsListState extends State<ItemsList> {
 
   @override
   Widget build(BuildContext context) {
-    if (items == null || _isLoading == true) {
+    if (items == null || items.length <= 0 || _isLoading == true) {
       return Center(
         child: CircularProgressIndicator(),
       );
