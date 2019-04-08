@@ -1,9 +1,9 @@
 import 'dart:async';
+import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 
 import 'package:flutter/material.dart';
 import 'package:toto/hackernews/models/item.dart';
 import 'package:dio/dio.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HackerNews extends StatelessWidget {
   @override
@@ -55,7 +55,6 @@ class _ItemsListState extends State<ItemsList> {
   _appendItems(List<Item> value) {
     setState(() {
       items.addAll(value);
-      print(items.length);
       _isLoading = false;
     });
   }
@@ -90,10 +89,12 @@ class _ItemsListState extends State<ItemsList> {
                   icon: Icon(Icons.comment, color: Colors.deepOrange,),
                   onPressed: () async {
                     var url = "https://news.ycombinator.com/item?id=${item.id}";
-                    if (await canLaunch(url)) {
-                      await launch(url, forceWebView: true, forceSafariVC: true);
-                    } else {
-                      print('Can not launch $url');
+                    try {
+                      await launch(url, option: CustomTabsOption(
+                        toolbarColor: Colors.deepOrange,
+                        showPageTitle: true,
+                      ));
+                    } catch (e) {
                     }
                   },
                 ),
@@ -101,10 +102,12 @@ class _ItemsListState extends State<ItemsList> {
               ],
             ),
             onTap: () async {
-              if (await canLaunch(item.url)) {
-                await launch(item.url, forceWebView: true, forceSafariVC: true);
-              } else {
-                print('Can not launch ${item.url}');
+              try {
+                await launch(item.url, option: CustomTabsOption(
+                  toolbarColor: Colors.deepOrange,
+                  showPageTitle: true,
+                ));
+              } catch (e) {
               }
             },
           );
