@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 
 import 'package:flutter/material.dart';
-import 'package:toto/hackernews/models/item.dart';
-import 'package:dio/dio.dart';
+import 'package:toto/hackernews/item_model.dart';
+import 'package:toto/hackernews/item_repository.dart';
 
 class HackerNews extends StatefulWidget {
   @override
@@ -11,6 +11,7 @@ class HackerNews extends StatefulWidget {
 }
 
 class _HackerNews extends State<HackerNews> {
+  ItemRepository itemRepository = ItemRepository();
   List<Item> items = [];
   bool _isLoading = false;
 
@@ -25,31 +26,20 @@ class _HackerNews extends State<HackerNews> {
       _isLoading = true;
     });
 
-    Dio().get('https://hacker-news.firebaseio.com/v0/topstories.json')
-      .then((response) {
-        _getItems(response.data.sublist(0, 24)).then(_appendItems);
-      })
-      .catchError((error) {
-        print(error);
+    try {
+      var response = await itemRepository.getItems();
+      setState(() {
+        items.addAll(response);
+        _isLoading = false;
       });
-  }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
 
-  Future<List<Item>> _getItems(List<dynamic> list) async {
-    Completer<List<Item>> completer = new Completer<List<Item>>();
-
-    Future.wait(
-      list.map((id) => Dio().get('https://hacker-news.firebaseio.com/v0/item/$id.json')
-        .then((response) => Item.fromJson(response.data)))
-    ).then((value) => completer.complete(value));
-
-    return completer.future;
-  }
-
-  _appendItems(List<Item> value) {
-    setState(() {
-      items.addAll(value);
-      _isLoading = false;
-    });
+      final snackBar = SnackBar(content: Text('Unable to fetch stories from HackerNews!'),);
+      Scaffold.of(context).showSnackBar(snackBar);
+    }
   }
 
   Future _refreshItems() async {
@@ -59,57 +49,103 @@ class _HackerNews extends State<HackerNews> {
 
   @override
   Widget build(BuildContext context) {
-    if (items == null || items.length <= 0 || _isLoading == true) {
+    if (_isLoading == true) {
       return Center(
         child: CircularProgressIndicator(),
       );
     }
 
+    if (items == null || items.length <= 0) {
+      return RefreshIndicator(
+        onRefresh: _refreshItems,
+        child: Scrollbar(
+          child: SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            child: Container(
+              child: Center(
+                child: Text('There are no stories available!'),
+              ),
+              height: MediaQuery.of(context).size.height - 100,
+            ),
+          ),
+        ),
+      );
+    }
+
     return RefreshIndicator(
       onRefresh: _refreshItems,
-      child: ListView.builder(
-        itemCount: items.length,
-        itemBuilder: (BuildContext context, i) {
-          Item item = items[i];
+      child: Scrollbar(
+        child: ListView.builder(
+          itemCount: items.length,
+          itemBuilder: (BuildContext context, i) {
+            return ItemTile(item: items[i],);
+          },
+        ),
+      ),
+    );
+  }
+}
 
-          return ListTile(
-            contentPadding: EdgeInsets.all(10.0),
-            title: Padding(padding: EdgeInsets.only(bottom: 8.0), child: Text(item.title),),
-            subtitle: Text("${item.by} - ${item.time}", style: TextStyle(fontSize: 12.0),),
-            trailing: Transform.translate(
-              offset: Offset(5, 0),
-                child: IconButton(
-                padding: EdgeInsets.all(0),
-                icon: Column(
-                  children: <Widget>[
-                    Icon(Icons.comment,),
-                    Text(item.descendants)
-                  ],
-                ),
-                onPressed: () async {
-                  var url = "https://news.ycombinator.com/item?id=${item.id}";
-                  try {
-                    await launch(url, option: CustomTabsOption(
-                      toolbarColor: Color(0xFF222222),
-                      showPageTitle: true,
-                    ));
-                  } catch (e) {
-                  }
-                },
+class ItemTile extends StatelessWidget {
+  final Item item;
+
+  ItemTile({this.item});
+
+  _launchURL(String url) async {
+    try {
+      await launch(url, option: CustomTabsOption(
+        toolbarColor: Color(0xFF222222),
+        showPageTitle: true,
+        enableDefaultShare: true
+      ));
+    } catch (e) {
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var uri = Uri.parse(item.url);
+
+    return ListTile(
+      contentPadding: EdgeInsets.all(10.0),
+      title: Padding(
+        padding: EdgeInsets.only(bottom: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(bottom: 8.0),
+              child: Row(
+                children: <Widget>[
+                  Text("+${item.score}", style: TextStyle(fontSize: 11.0, color: Colors.black,)),
+                  Padding(padding: EdgeInsets.only(left:8.0, right: 8.0), child: Icon(Icons.watch_later, color: Color(0xFF999999), size: 6.0,),),
+                  Text("${item.time}", style: TextStyle(fontSize: 11.0, color: Color(0xFF888888),)),
+                ],
               ),
             ),
-            onTap: () async {
-              try {
-                await launch(item.url, option: CustomTabsOption(
-                  toolbarColor: Color(0xFF222222),
-                  showPageTitle: true,
-                ));
-              } catch (e) {
-              }
-            },
-          );
-        },
+            Text(item.title)
+          ],
+        ),
       ),
+      subtitle: Text("${item.by}  −  ${uri.host}", style: TextStyle(fontSize: 12.0),),
+      trailing: Transform.translate(
+        offset: Offset(8, 0),
+          child: IconButton(
+          padding: EdgeInsets.all(0),
+          icon: Column(
+            children: <Widget>[
+              Icon(Icons.comment,),
+              Text(item.descendants)
+            ],
+          ),
+          onPressed: () async {
+            await _launchURL("https://news.ycombinator.com/item?id=${item.id}");
+          },
+        ),
+      ),
+      onTap: () async {
+        await _launchURL(item.url);
+      },
     );
   }
 }

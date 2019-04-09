@@ -26,6 +26,7 @@ dependencies:
   timeago: ^2.0.13
   dio: any
   flutter_custom_tabs: any
+  intl: any
 
 dev_dependencies:
   flutter_test:
