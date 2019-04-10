@@ -1,9 +1,8 @@
 import 'dart:async';
-import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
-
 import 'package:flutter/material.dart';
 import 'package:toto/hackernews/item_model.dart';
 import 'package:toto/hackernews/item_repository.dart';
+import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 
 class HackerNews extends StatefulWidget {
   @override
@@ -29,7 +28,7 @@ class _HackerNews extends State<HackerNews> {
     try {
       var response = await itemRepository.getItems();
       setState(() {
-        items.addAll(response);
+        items = response;
         _isLoading = false;
       });
     } catch (e) {
